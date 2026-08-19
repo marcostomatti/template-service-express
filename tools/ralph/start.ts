@@ -34,6 +34,8 @@ async function preserveProgress(): Promise<void> {
   const prompt = [
     '* Read `@progress.txt` in full.',
     '* If there\'s anything worth keeping, grab what\'s generally relevant from `@progress.txt` and include it in `@AGENTS.md`, `@README.md`, `@CONTRIBUTING.md` or a pertinent skill under `.claude/skills/`.',
+    '* If a learn/learn-eval skill is available in this session, invoke it now so reusable patterns from this run are persisted as skills.',
+    '* Then compact `@progress.txt` per `.claude/skills/progress-hygiene/SKILL.md`: drop every finding that was just persisted somewhere durable and anything stale or task-specific; keep only broadly-relevant findings not yet promoted. The file must stay small — future plan generation injects it as context.',
     '* If it\'s present, extract the issue reference from the plan file (e.g. "#42") to be used in the PR title.',
     `* If the reference is not present on the plan check if the branch name (${branch}) carries one (e.g. feat/42-slug).`,
     '* Use the plan title as the PR title, include the issue reference if you found it, e.g. "Implement user authentication (#42)".',

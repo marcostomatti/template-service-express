@@ -87,8 +87,9 @@ injected as advisory planning context (skip with `--no-progress`).
 `bun run ralph start --plan=.plans/PLAN-<stub>.md` executes it task-by-task
 with a per-plan tracker, marking `[x]`/`[BLOCKED]` and resuming blocked
 tasks first. `--start-at=HH:MM` defers a run. On completion the loop
-extracts general findings from `progress.txt` into the repo docs and opens
-a PR.
+promotes general findings from `progress.txt` into the repo docs/skills and
+then compacts the file per `.claude/skills/progress-hygiene/SKILL.md` —
+progress feeds future plan generation, so it must stay small and current.
 
 ## Issue reporting
 

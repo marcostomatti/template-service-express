@@ -22,8 +22,14 @@ pre-generated plans):
    preserve-progress step (PR creation).
 3. Between items: wait for the PR merge (poll `gh pr view --json state`, or
    interactive confirm like the origin), checkout main, pull, continue.
-4. SIGINT marks the current item blocked; re-running resumes it first.
-5. Respect the usage guard (`checkUsage`) between items.
+4. Between items, enforce progress hygiene: the finishing step of each item
+   already promotes + compacts `progress.txt`
+   (`.claude/skills/progress-hygiene/SKILL.md`); the queue must verify the
+   file is under the ~8k soft cap before generating the next item's plan —
+   uncompacted progress compounds across a queue and bloats every
+   subsequent plan-generation context.
+5. SIGINT marks the current item blocked; re-running resumes it first.
+6. Respect the usage guard (`checkUsage`) between items.
 
 ## Non-goals
 
