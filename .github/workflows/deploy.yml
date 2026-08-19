@@ -1,0 +1,45 @@
+name: Deploy
+
+# Manually triggered. Cloud targets, credentials, and the actual deploy
+# mechanism are on the adopter's purview — the steps below build the image
+# and stop where your infrastructure begins.
+#
+# To deploy automatically on merge instead, uncomment the push trigger:
+#
+# on:
+#   push:
+#     branches: [main]
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        type: choice
+        options: [staging, production]
+        default: staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t template-service-express:${{ github.sha }} .
+
+      # ── Adopter's section ──────────────────────────────────────────────
+      # Push the image to your registry and roll it out. Examples:
+      #
+      # - name: Push to registry
+      #   run: |
+      #     docker tag template-service-express:${{ github.sha }} $REGISTRY/template-service-express:${{ github.sha }}
+      #     docker push $REGISTRY/template-service-express:${{ github.sha }}
+      #
+      # - name: Roll out
+      #   run: ssh deploy@host 'docker pull … && docker compose up -d'
+      - name: Deploy target not configured
+        run: |
+          echo "Image built. Configure your registry push + rollout in .github/workflows/deploy.yml."
+          exit 0

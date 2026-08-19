@@ -1,0 +1,39 @@
+name: Test
+
+# Unit suite only, on GitHub-hosted runners: no databases, no external
+# dependencies, no credentials. The live/integration suite (tests/live/,
+# `bun run test:live`) is deliberately NOT run here — it needs docker-compose
+# services, and pulling them into every PR is an avoidable cost for template
+# adopters. Run it locally (see AGENTS.md "Testing") or wire your own job.
+#
+# Self-hosted note: if you run your own runner (e.g. a homelab box), point
+# `runs-on` at its labels — e.g. `runs-on: [self-hosted, grow-box]` — and the
+# job can then also reach private registries or long-lived test databases.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Type-check
+        run: bun run check-types
+
+      - name: Unit tests
+        run: bun run test
