@@ -61,10 +61,15 @@ export default async function start(args: string[]): Promise<void> {
   const startAt = argValue(args, '--start-at');
   if (startAt) await deferUntil(startAt);
 
+  // Default plan: .plans/PLAN.md (the untracked plans directory `ralph plan`
+  // writes to), falling back to a root PLAN.md for hand-written plans.
   const planArg = argValue(args, '--plan');
+  const defaultPlanPath = fs.existsSync(path.join(repoRoot, '.plans', 'PLAN.md'))
+    ? path.join(repoRoot, '.plans', 'PLAN.md')
+    : path.join(repoRoot, 'PLAN.md');
   const planPath = planArg
     ? path.resolve(repoRoot, planArg)
-    : path.join(repoRoot, 'PLAN.md');
+    : defaultPlanPath;
 
   const rootPromptPath = path.join(repoRoot, 'PROMPT.md');
   const promptPath = fs.existsSync(rootPromptPath)

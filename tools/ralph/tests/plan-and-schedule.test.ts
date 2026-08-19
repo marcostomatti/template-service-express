@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { buildPlanPrompt, stubFromSpecPath } from '../plan.js';
+import { buildPlanPrompt, formatProgressSection, stubFromSpecPath } from '../plan.js';
 import { msUntil } from '../utils/schedule.js';
 import { trackerPathFor } from '../utils/tracker.js';
 
@@ -36,13 +36,40 @@ describe('msUntil', () => {
 });
 
 describe('buildPlanPrompt', () => {
-  it('substitutes plan, prerequisites, and spec placeholders', () => {
-    const template = 'plan={PLAN_FILE} prereq={PREREQUISITES_FILE}\n---\n{SPEC_CONTENT}';
+  const template = 'plan={PLAN_FILE} prereq={PREREQUISITES_FILE}\n{PROGRESS_SECTION}\n---\n{SPEC_CONTENT}';
+
+  it('substitutes plan, prerequisites, and spec placeholders into .plans/', () => {
     const out = buildPlanPrompt(template, '# My spec', 'my-feature');
-    expect(out).toContain('plan=PLAN-my-feature.md');
-    expect(out).toContain('prereq=PREREQUISITES-my-feature.md');
+    expect(out).toContain('plan=.plans/PLAN-my-feature.md');
+    expect(out).toContain('prereq=.plans/PREREQUISITES-my-feature.md');
     expect(out).toContain('# My spec');
     expect(out).not.toContain('{SPEC_CONTENT}');
+    expect(out).not.toContain('{PROGRESS_SECTION}');
+  });
+
+  it('injects progress findings as advisory context when provided', () => {
+    const out = buildPlanPrompt(template, '# My spec', 'my-feature', 'auth logic lives in src/auth');
+    expect(out).toContain('Findings from previous runs');
+    expect(out).toContain('auth logic lives in src/auth');
+    expect(out).toContain('ADVISORY');
+  });
+
+  it('omits the progress section entirely when there is nothing to inject', () => {
+    for (const progress of [undefined, '', '  \n ']) {
+      const out = buildPlanPrompt(template, '# My spec', 'my-feature', progress);
+      expect(out).not.toContain('Findings from previous runs');
+    }
+  });
+});
+
+describe('formatProgressSection', () => {
+  it('caps oversized progress files, keeping the most recent findings', () => {
+    const old = 'OLD-FINDING '.repeat(2_000);
+    const recent = 'RECENT-FINDING';
+    const out = formatProgressSection(old + recent);
+    expect(out).toContain('older findings truncated');
+    expect(out).toContain(recent);
+    expect(out.length).toBeLessThan(17_500);
   });
 });
 

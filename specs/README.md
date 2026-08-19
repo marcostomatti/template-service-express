@@ -4,6 +4,11 @@ Follow-up work identified during the extraction that exceeds the
 copy/rename/trim scope of the initial port. One file per spec; feed one to
 the loop with `bun run ralph plan --spec=specs/<file>.md`.
 
+> This directory is TRACKED and only holds specs whose subject is already
+> visible in the public code. Working specs — anything that could disclose
+> an unpatched privacy/security bug — belong in the gitignored `.specs/`
+> directory instead (see AGENTS.md — "Plans and specs").
+
 | Spec | What it covers | Why it's deferred |
 | --- | --- | --- |
 | [auth-basic-strategy.md](auth-basic-strategy.md) | Replace the dev introspection stub with a real basic-auth strategy (user/password from `.env` → token, created right after migration) | Auth backend scope exceeds the balance of the initial port; middleware is already token-wired |

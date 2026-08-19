@@ -109,17 +109,22 @@ bun run stress:start && bun run test:live && bun run stress:stop
 ## The agent loop (ralph)
 
 ```bash
-bun run ralph plan  --spec=specs/my-feature.md   # spec → PLAN-my-feature.md (+ PREREQUISITES-…)
-bun run ralph start --plan=PLAN-my-feature.md    # execute task-by-task; resumes blocked tasks
-bun run ralph start --plan=PLAN-my-feature.md --start-at=23:00   # queue for off-hours
+bun run ralph plan  --spec=.specs/my-feature.md         # spec → .plans/PLAN-my-feature.md (+ PREREQUISITES-…)
+bun run ralph start --plan=.plans/PLAN-my-feature.md    # execute task-by-task; resumes blocked tasks
+bun run ralph start --plan=.plans/PLAN-my-feature.md --start-at=23:00   # queue for off-hours
 ```
 
 Plans follow the format in `.claude/skills/dev-planner/SKILL.md` (flat
-`- [ ]` checklists under `# Stage:` headings; per-plan trackers). The loop
-prompt lives in `tools/ralph/PROMPT.md` (a root `PROMPT.md` overrides it).
-Agent personas and skills under `.claude/` carry the working conventions;
-`specs/README.md` indexes the follow-up specs you can feed straight into
-`ralph plan`.
+`- [ ]` checklists under `# Stage:` headings; per-plan trackers). When a
+`progress.txt` exists, `ralph plan` feeds its accumulated findings to the
+planner as advisory context (`--no-progress` to skip). The loop prompt
+lives in `tools/ralph/PROMPT.md` (a root `PROMPT.md` overrides it).
+
+Working plans and specs live in the **gitignored** `.plans/` and `.specs/`
+directories — they can describe unpatched privacy/security bugs, so they
+stay out of the remote by design (see AGENTS.md — "Plans and specs"). The
+tracked `specs/` directory only indexes follow-ups whose subject is already
+visible in the code; those can be fed straight into `ralph plan` too.
 
 ## CI & deploy
 
