@@ -1,26 +1,13 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@open-tomato/typescript-config/bun",
   "compilerOptions": {
-    "declaration": false,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "incremental": false,
-    "isolatedModules": true,
-    "lib": ["es2022"],
-    "module": "es2022",
-    "moduleDetection": "force",
-    "moduleResolution": "bundler",
-    "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUncheckedIndexedAccess": true,
+    // Off: this service never emits declarations, and its exports include
+    // Zod schemas and a Drizzle table whose inferred types cannot be written
+    // by hand. Follow-up: turn it on if lib/ is ever published as a package.
+    "isolatedDeclarations": false,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ES2022"
+    "noUnusedParameters": true
   },
   "include": ["src", "lib", "tools", "tests", "*.ts", "*.mjs"],
   // *.test.ts is excluded from check-types (origin parity — vitest executes

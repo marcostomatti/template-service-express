@@ -1,18 +1,13 @@
-import globals from 'globals';
+import baseConfig from '@open-tomato/eslint-config';
 
-import baseConfig from './base.mjs';
-
-/** @type {import("eslint").Linter.Config} */
+/**
+ * ESLint flat config: the shared open-tomato base, plus what is this
+ * service's own.
+ *
+ * @type {import("eslint").Linter.Config[]} */
 export default [
-  { ignores: ['.tmp/**', '.docs/**', 'drizzle/**'] },
+  { ignores: ['drizzle/**'] },
   ...baseConfig,
-  {
-    languageOptions: {
-      globals: {
-        ...globals.node,
-      },
-    },
-  },
   {
     // The MCP SDK resolves through package `exports` subpaths, which the
     // TS resolver can't follow for files excluded from tsconfig (tests).
